@@ -44,7 +44,8 @@ print ("*"*50)
 for sheet in wb:
     print (sheet.title)
 
-
+for i in range(10):
+    print (i)
 # Save the file
 wb.save("d:\\eclipse-workspace\\abc.xlsx")
 
