@@ -20,6 +20,7 @@ from openpyxl.chart import (
     Reference
 )
 from openpyxl.chart.axis import DateAxis
+from test.pickletester import AAA
  
 
 ##上述为固定需要import进来的一些包，wss是新建的一个具体写的excel对象。
@@ -33,7 +34,7 @@ sheet1 = wb.create_sheet("IFBA")
 sheet2 = wb.create_sheet("XUN1")  
 
 #sheets = ws.get_sheet_names()
-
+print(AAA)
 #print ('wer', sheets)
 #sheet0 = sheets[0]  # 第一个表格的名称  ＃其实感觉没什么用，可以直接写worksheet的名字
 #sheet1 = sheets[1]
