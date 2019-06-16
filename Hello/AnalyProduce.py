@@ -5,17 +5,41 @@ Created on 2019年4月18日
 '''
        
 from openpyxl import Workbook
+from openpyxl import load_workbook
+from pickle import ADDITEMS
 wb = Workbook()    #创建文件对象
 
 # grab the active worksheet
+wb = load_workbook(filename=r'C:\Users\MagicBook\Desktop\9800.xlsx')   # 打开22.xlsx从里面读数据
 ws = wb.active     #获取第一个sheet
+#ws=wb.get_active_sheet()
+sheet0 = wb.create_sheet("2019")  
 
+rows1 = ws.rows
+RowIndex =0
+for aol in rows1:
+    RowIndex = RowIndex + 1
+    content1 = []
+    for x in aol:
+        a = x.value
+        if a == '编码':
+           a = "编码(软件版本)" 
+        elif a == 'ASD':
+           a = "ASD(实际发货日期)"
+        elif a == 'CPD':
+           a = "CPD(承诺交单日期)"
+        content1.append(a)       
+    if RowIndex == 1:
+        content1.extend(['version', 'IsMain', 'Date', 'Site', 'Region'])
+    print (content1)
+    sheet0.append(content1)    #一次写一行
 # Data can be assigned directly to cells
-ws['A1'] = 42      #写入数字
-ws['B1'] = "你好"+"automation test" #写入中文（unicode中文也可）
+#ws['A1'] = 42      #写入数字
+#ws['B1'] = "你好"+"automation test" #写入中文（unicode中文也可）
 
 # Rows can also be appended
-ws.append([1, 2, 3])    #写入多个单元格
+
+wb.save('C:\\Users\MagicBook\Desktop\9800.xlsx')
 
 # Python types will automatically be converted
 import datetime
