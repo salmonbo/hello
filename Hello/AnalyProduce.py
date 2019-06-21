@@ -3,35 +3,69 @@ Created on 2019年4月18日
 
 @author: w00390037
 '''
-       
+#coding=utf-8       
 from openpyxl import Workbook
 from openpyxl import load_workbook
-from pickle import ADDITEMS
+#from pickle import ADDITEMS
+from openpyxl.utils.cell import get_column_letter
 wb = Workbook()    #创建文件对象
-
+wb = load_workbook(filename=r'C:\Users\MagicBook\Desktop\9800.xlsx',data_only=True)   # 打开22.xlsx从里面读数据
 # grab the active worksheet
-wb = load_workbook(filename=r'C:\Users\MagicBook\Desktop\9800.xlsx')   # 打开22.xlsx从里面读数据
-ws = wb.active     #获取第一个sheet
-#ws=wb.get_active_sheet()
-sheet0 = wb.create_sheet("2019")  
+#ws = wb.active     #获取第一个sheet
 
-rows1 = ws.rows
-RowIndex =0
-for aol in rows1:
-    RowIndex = RowIndex + 1
+ws = wb[wb.sheetnames[0]]       # 获取第一个sheet
+
+FileNameVerList = r"C:\Users\MagicBook\Desktop\9800VersionList.xlsx"
+sheet0 = wb.create_sheet("2019")
+'''
+print(ws.title)
+print(sheet0.title)
+print(wb.get_active_sheet())
+'''
+for aol in ws.rows:
     content1 = []
     for x in aol:
         a = x.value
-        if a == '编码':
-           a = "编码(软件版本)" 
-        elif a == 'ASD':
-           a = "ASD(实际发货日期)"
-        elif a == 'CPD':
-           a = "CPD(承诺交单日期)"
+        if x.row == 1:
+            if a == '编码':
+                a = "编码(软件版本)"
+                VerCodePos = x.column
+            elif a == 'ASD':
+                a = "ASD(实际发货日期)"
+                ASDPos = x.column
+            elif a == 'CPD':
+                a = "CPD(承诺交单日期)"
+                CPDPos = x.column
+            elif a == '备货单':
+                BillPos = x.column
+            elif a == '国家':
+                CountryPos = x.column
         content1.append(a)       
-    if RowIndex == 1:
+#第一行遍历完，到最后一列
+    if x.row == 1:
         content1.extend(['version', 'IsMain', 'Date', 'Site', 'Region'])
-    print (content1)
+    else:
+        b = get_column_letter(VerCodePos)+str(x.row)
+        a = "=VLOOKUP({0}, '{1}'!C2:F5, 4, FALSE)".format(b,FileNameVerList)
+        content1.append(a)
+
+        a = "=VLOOKUP({0}, '{1}'!C2:F5, 2, FALSE)".format(b,FileNameVerList)
+        content1.append(a)
+
+        b = get_column_letter(ASDPos)+str(x.row)        
+        a = "=TEXT({0},\"YYYY/MM\")".format(b)
+        content1.append(a)
+
+        b = get_column_letter(BillPos)+str(x.row)
+        a = "=VLOOKUP({0}, L{1}:L5, 1, FALSE)".format(b,x.row)
+        content1.append(a)
+
+        b = get_column_letter(CountryPos)+str(x.row)
+        a = "=VLOOKUP({0}, L1:L5, 1, FALSE)".format(b)
+        content1.append(a)
+        
+        a = "='{0}'!B2".format(FileNameVerList)
+        content1.append(a)
     sheet0.append(content1)    #一次写一行
 # Data can be assigned directly to cells
 #ws['A1'] = 42      #写入数字
@@ -48,8 +82,6 @@ ws['A2'] = datetime.datetime.now()    #写入一个当前时间
 #写入一个自定义的时间格式
 #ws['A3'] =time.strftime("%Y年%m月%d日 %H时%M分%S秒",time.localtime())
 
-ws['A3'] =time.strftime('%Y{y}%m{m}%d{d} %H{h}%M{f}%S{s}').format(y='年',m='月',d='日',h='时',f='分',s='秒')
-
 
 ws1 = wb.create_sheet("Mysheet")           #创建一个sheet
 ws1.title = "New Title"                    #设定一个sheet的名字
@@ -57,3 +89,4 @@ ws2 = wb.create_sheet("Mysheet", 0)      #设定sheet的插入位置 默认插�
 ws2.title = u"你好"    #设定一个sheet的名字 必须是Unicode
 ws1.sheet_properties.tabColor = "1072BA"   #设定sheet的标签的背景颜色
 
+print('finish')
